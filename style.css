@@ -1,107 +1,484 @@
-*{
-    margin: 0;
-    padding: 0;
-    font-family: 'poppins','sans-serif';
-    box-sizing: border-box;
+/* ------------------------------
+   GLOBAL RESET & BASE STYLES
+------------------------------ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Helvetica', sans-serif;
 }
-body
+
+body.theme-light 
 {
-    background-color: #222;
+  background-color: #121212;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: background-image 0.5s ease;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden; /* ✅ Prevent scroll on body */
+  z-index: 0;
 }
-.card
-{
-    width: 90%;
-    max-width: 470px;
-    background: linear-gradient(135deg, #00feba,#5b548a);
-    color : #fff;
-    margin: 100px auto 0;
-    border-radius: 20px;
-    padding: 40px 35px;
-    text-align: center;
+html {
+  height: 100%;
+  overflow: hidden; /* ✅ Prevent scroll on html */
 }
-.search
-{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+/* Optional: Add a subtle dark overlay if text lacks contrast */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0); /* Adjust for brightness */
+  z-index: 0;
 }
-.search input
-{
-    border: 0;
-    outline: 0;
-    background: #ebffeb;
-    color: #555;
-    padding: 10px 25px;
-    height: 60px;
-    border-radius: 30px;
-    flex: 1;
-    margin-right: 16px;
-    font-size:18px;
+
+/* Ensure all UI stays above background */
+.main-container,
+.search-bar,
+.bottom-forecast {
+  position: relative;
+  z-index: 1;
 }
-.search button
-{
-    border: 0;
-    outline: 0;
-    background: #ebffeb;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    cursor: pointer;
+
+
+
+
+/* Blocks with variable background (use classes for theme switching) */
+.weather-block {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: background-color 0.3s ease;
 }
-.search button img
-{
-    width : 16px;
+
+/* You can define classes for condition-specific styles if needed */
+.weather-clear    { background-color: rgba(0, 0, 0, 0.2); }
+.weather-cloudy   { background-color: rgba(0, 0, 0, 0.2); }
+.weather-rainy    { background-color: rgba(10, 10, 40, 0.5); }
+.weather-snowy    { background-color: rgba(255, 255, 255, 0.2); color: #000; }
+.weather-thunder  { background-color: rgba(0, 0, 0, 0.3); }
+
+.weather-clear-bottom    { background-color: rgba(0, 0, 0, 0.4); }
+.weather-cloudy-bottom   { background-color: rgba(0, 0, 0, 0.4); }
+.weather-rainy-bottom    { background-color: rgba(0, 0, 0, 0.4); }
+.weather-snowy-bottom    { background-color: rgba(0, 0, 0, 0.4);}
+.weather-thunder-bottom  { background-color: rgba(0, 0, 0, 0.4); }
+
+/* ------------------------------
+   SEARCH BAR SECTION
+------------------------------ */
+.search-bar {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 600px;
+  background: rgba(40, 40, 40, 0.6);
+  border-radius: 30px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 10;
 }
-.weather-icon
-{
-    width : 170px;
-    margin-top: 30px;
+
+.search-bar input {
+  width: 100%;
+  padding: 12px 50px 12px 20px;
+  border-radius: 30px;
+  border: none;
+  background-color: transparent;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
 }
-.weather h1
-{
-    font-size : 80px;
-    font-weight: 500;
+.search-bar input::placeholder {
+  color: #aaa;
 }
-.weather h2
-{
-    font-size : 45px;
-    font-weight:400;
-    margin-top: -10px;
+.search-bar button {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #ddd;
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.2s ease;
 }
-.details
-{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    margin-top: 50px;
+.search-bar button:hover {
+  color: #fff;
 }
-.col
-{
-    display: flex;
-    align-items: center;
-    text-align: left;
+/* ------------------------------
+   AUTOCOMPLETE DROPDOWN LIST
+------------------------------ */
+.auto-complete-list {
+  position: absolute;
+  width: 100%;
+  background: rgba(40, 40, 40, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: none;
+  list-style: none;
+  overflow: hidden;
 }
-.col img
-{
-    width : 40px;
-    margin-right: 10px;
+
+.auto-complete-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  color: #eee;
+  transition: background-color 0.2s ease;
 }
-.humidity,.wind
-{
-    font-size: 28px;
-    margin-top: -6px;
+
+.auto-complete-list li:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
 }
-.weather
-{
-    display: none;
+
+.auto-complete-list .text {
+  display: flex;
+  flex-direction: column;
 }
-.error
+
+.auto-complete-list .cityName {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.auto-complete-list .details {
+  font-size: 13px;
+  color: #bbb;
+}
+
+.auto-complete-list .arrow {
+  color: #888;
+  font-size: 16px;
+}
+/* ------------------------------
+   MAIN LAYOUT CONTAINER
+------------------------------ */
+.main-container {
+  width: 100%;
+  height: 100vh;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px 40px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ------------------------------
+   Top LAYOUT CONTAINER
+------------------------------ */
+.top-section {
+   height: calc(100vh - 220px); /* 220px already includes padding */
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* ------------------------------
+   Left  SECTION
+------------------------------ */
+.left-section {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  width: fit-content;
+}
+.left-section i{
+  font-size: 20px;
+}
+.city-name {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+}
+
+
+/* ------------------------------
+   CENTER SECTION
+------------------------------ */
+.center-section {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: fit-content;
+}
+.temp-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.temp-card > div:first-child {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 8px;
+}
+
+.temp {
+  font-size: 200px;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1;
+}
+
+.temp-unit {
+  font-size: 48px;
+  margin-top: 16px;
+}
+
+.temp-details
 {
-    text-align: left;
-    margin-left: 10px;
-    font-size: 14px;
-    margin-top: 10px;
-    display: none;
+  font-size: 18px;
+}
+
+/* ------------------------------
+   Right section SECTION
+------------------------------ */
+.right-section {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  width: fit-content;
+  gap: 12px;
+}
+
+.mini-cards {
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  padding: 10px 14px;
+  min-width: 180px;
+  max-width: 240px;
+  gap: 12px;
+}
+
+.mini-cards img,
+.mini-cards i {
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.mini-cards div {
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-cards span {
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.mini-cards p {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+}
+/* ───────────────────────────────────────────── */
+/* Forecast Bottom Section (Pinned to Bottom)   */
+/* ───────────────────────────────────────────── */
+.bottom-forecast {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  min-height: 220px;
+  padding: 20px 40px 30px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-y: hidden;
+
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8x);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ─────────────────────────────────────────────── */
+/* Forecast Toggle Section (Hourly / Weekly Buttons) */
+/* ─────────────────────────────────────────────── */
+
+.forecast-toggle {
+  position: relative;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.forecast-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.forecast-buttons button {
+  background: rgba(60, 60, 60, 0.7);
+  color: #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 6px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: none;
+}
+
+.forecast-buttons button:hover {
+  background: rgba(90, 90, 90, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #eee;
+}
+
+.forecast-buttons button.active {
+  background: rgba(100, 150, 255, 0.7);
+  color: #e0e0e0;
+  border-color: rgba(100, 150, 255, 0.4);
+}
+
+.forecast-toggle hr {
+  border: none;
+  border-top: 1px solid #444;
+  width: 90%;
+  margin: 0 auto;
+}
+/* ------------------------------
+   FORECAST CARDS (HOURLY/WEEKLY)
+------------------------------ */
+.forecast-cards {
+  display: flex;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+  padding: 20px 0 30px; /* extra space under cards */
+  align-items: center;
+}
+
+/* Modern glossy scrollbar styling */
+.forecast-cards::-webkit-scrollbar {
+  height: 8px;
+}
+
+.forecast-cards::-webkit-scrollbar-track {
+  background: rgba(28, 28, 28, 0.6); /* Slightly transparent */
+}
+
+.forecast-cards::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, rgba(255,255,255,0.2), rgba(200,200,200,0.3));
+  border-radius: 10px;
+  backdrop-filter: blur(2px); /* For a glossy effect */
+  transition: background 0.3s ease;
+}
+
+.forecast-cards::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, rgba(255,255,255,0.4), rgba(200,200,200,0.5));
+}
+
+/* Each card */
+.forecast-card {
+
+  width: 125px;
+  height: 140px;
+  flex-shrink: 0;
+  padding: 12px;
+  border-radius: 5px;
+  text-align: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* ensure all content (including image) is centered */
+  justify-content: space-between;
+}
+
+.forecast-card img {
+  width: 48px;
+  height: 48px;
+  margin: 8px 0;
+}
+
+.forecast-day {
+  font-weight: bold;
+  font-size: 14px;
+}
+.forecast-week {
+  font-weight: bold;
+  font-size: 14px;
+}
+.forecast-hour {
+  font-size: 16px;
+  font-weight: bold;
+}
+.forecast-tempMinMax {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+}
+.forecast-temp {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.forecast-condition {
+  font-size: 12px;
+  color: #fff; 
+  margin-top: 6px;
+}
+/* ------------------------------
+   UTILITIES
+------------------------------ */
+.hidden {
+  display: none;
 }

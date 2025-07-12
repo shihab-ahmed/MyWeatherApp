@@ -1,44 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-<div class="card">
-    <div class="search">
-        <input type="text" placeholder="enter city name" spellcheck="false">
-        <button><img src="images/search.png"></button>
+<body class="theme-light">
+
+  <div class="main-container">
+    <div class="search-bar">
+      <input type="text" id="cityInput" placeholder="Search city..." />
+      <button id="clearBtn">&#10006;</button>
+      <ul class="auto-complete-list" id="suggestionBox"></ul>
     </div>
-    <div class="error">
-        <p> Invalid City Name</p>
-    </div>
-    <div class="weather">
-        <img src ="images/rain.png" class="weather-icon">
-        <h1 class="temp">22°c</h1>
-        <h2 class="city">New York</h2>
-        <div class="details"> 
-            <div class ="col">
-                <img src="images/humidity.png">
-                <div>
-                    <p class="humidity">50%</p>
-                    <p>Humidity</p>
-                </div>                 
-            </div>
-            <div class ="col">
-                <img src="images/wind.png">
-                <div>
-                    <p class="wind">15 km/h</p>
-                    <p>Wind Speed</p>
-                </div>                 
-            </div>
+
+    <div class="top-section">
+      <div class="left-section">
+        <div class="location-block">
+            <i class="fas fa-map-marker-alt location-icon"></i>
+            <div class="city-name" id="selectedCity">--</div>
+            <div class="date" id="currentDate">--</div>
+            <div class="week" id="currentWeek">--</div>
         </div>
+      </div>
+
+      <div class="center-section">
+        <div class="temp-card">
+          <div>
+            <p class="temp" id="temp">0.0</p>
+            <span class="temp-unit">°C</span>
+          </div>
+          <div class="temp-details" id="tempDetails">Feels like --° | Max --° | Min --°.</div>
+        </div>
+      </div>
+
+      <div class="right-section">
+          <div class="mini-cards">
+            <img id="conditionIcon" src="" alt="Condition" />
+            <div class="condition-text" id="conditionText">--</div>
+          </div>
+
+          <div class="mini-cards">
+            <i class="fas fa-tint"></i> <!-- Humidity -->
+            <div>
+              <p id="humidity">--%</p>
+              <span>Humidity</span>
+            </div>
+          </div>
+
+          <div class="mini-cards">
+            <i class="fas fa-wind"></i> <!-- Wind -->
+            <div>
+              <p id="wind">-- km/h</p>
+              <span>Wind</span>
+            </div>
+          </div>
+
+          <div class="mini-cards">
+            <i class="fas fa-cloud-showers-heavy"></i> <!-- Precip -->
+            <div>
+              <p id="Precip">-- mm</p>
+              <span>Precip</span>
+            </div>
+          </div>
+
+          <div class="mini-cards">
+            <i class="fas fa-tachometer-alt"></i> <!-- Pressure -->
+            <div>
+              <p id="Pressure">-- mb</p>
+              <span>Pressure</span>
+            </div>
+          </div>
+          <div class="mini-cards">
+            <i class="fas fa-sun"></i> <!-- Sunrise -->
+            <div>
+              <p id="Sunrise">--%</p>
+              <span>Sunrise</span>
+            </div>
+          </div>
+            <div class="mini-cards">
+              <i class="fas fa-moon"></i> <!-- Sunset -->
+              <div>
+                <p id="Sunset">-- km/h</p>
+                <span>Sunset</span>
+              </div>
+            </div>
+      </div>
+
     </div>
-</div>
-    <script src="index.js">
-        
-    </script>
+    <div class="bottom-forecast">
+      <div class="forecast-toggle">
+        <div class="forecast-buttons">
+          <button id="hourlyBtn" class="active">Hourly</button>
+          <button id="weeklyBtn">Weekly</button>
+        </div>
+        <hr />
+      </div>
+      <div class="forecast-cards" id="hourlyForecast">
+        <!-- 24 Hour Cards Will Be Appended -->
+      </div>
+      <div class="forecast-cards hidden" id="weeklyForecast">
+        <!-- 7 Day Cards Will Be Appended -->
+      </div>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
 </body>
 </html>
